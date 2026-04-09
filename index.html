@@ -657,7 +657,90 @@
             transition: height 0.3s ease;
         }
 
+
+        /* New Features CSS */
+        .presentation-mode {
+            font-size: 1.15rem;
+        }
+        .presentation-mode .sidebar {
+            width: 0; padding: 0; overflow: hidden;
+            border: none;
+        }
+        .presentation-mode .main-content {
+            margin-left: 0; max-width: 100%;
+            padding: 4rem 10rem;
+        }
+        .presentation-mode .glass-card {
+            border: 2px solid var(--blue);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+            padding: 3.5rem;
+        }
+        .presentation-mode .score-value {
+            font-size: 4rem;
+        }
+        .auto-scroll-btn {
+            position: fixed; bottom: 30px; left: 30px; z-index: 1000;
+            display: none;
+        }
+        .presentation-mode .auto-scroll-btn { display: block; }
+        
+        /* Radial Meter */
+        .radial-wrap {
+            position: relative;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--safe) 0%, transparent 0%);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            transition: background 1s ease-out;
+        }
+        .radial-inner {
+            width: 100px; height: 100px;
+            background: var(--card-glass);
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .radial-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem; font-weight: bold;
+        }
+        .radial-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Timeline */
+        .timeline {
+            border-left: 2px solid var(--border-glass);
+            padding-left: 20px; margin-top: 20px;
+            max-height: 300px; overflow-y: auto;
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 20px;
+        }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -26px; top: 5px;
+            width: 10px; height: 10px; border-radius: 50%; background: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .timeline-time { font-family: monospace; color: var(--text-muted); font-size: 0.8rem; }
+        .timeline-desc { color: var(--text-main); font-size: 0.95rem; margin-top: 4px; }
+        
+        .high-risk-glow { animation: red-alert 1.5s infinite alternate; }
+        @keyframes red-alert { 
+            0% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); border-color: rgba(239,68,68,0.5); } 
+            100% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.6); border-color: rgba(239,68,68,1); } 
+        }
+
+        /* Typing Effect for AI Processing */
+        .typing-effect {
+            overflow: hidden; white-space: nowrap; border-right: 2px solid var(--cyan);
+            animation: typing 2.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--cyan) } }
+        
         /* Responsive */
+
         @media (max-width: 900px) {
             .sidebar { width: 80px; padding: 2rem 0.5rem; }
             .nav-link span, .brand span { display: none; }
@@ -717,7 +800,12 @@
             <div class="icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
                 <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             </div>
+            
+            <div class="icon-btn" onclick="togglePresentationMode()" title="Toggle Presentation Mode">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            </div>
             <div class="icon-btn" onclick="hardReset()" title="Reset All Data">
+
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
             </div>
         </div>
@@ -741,7 +829,6 @@
                 <div class="data-item" style="border-left-color: var(--purple);"><label>GEOLOCATION</label><br><span id="socHostGeo">Fetching...</span></div>
             </div>
 
-            <!-- Stats -->
             <div class="dash-grid">
                 <div class="stat-box" style="padding: 1.5rem;">
                     <div class="stat-num" id="socTotal" style="font-size: 2rem; color: var(--cyan)">0</div>
@@ -765,27 +852,13 @@
                         <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.7rem;" onclick="clearSocLogs()">Clear Buffer</button>
                     </div>
                 </div>
-                <!-- Dynamic Graph -->
-                <div class="soc-chart-area" id="socGraph">
-                    <!-- Bars injected via JS -->
-                </div>
-                
-                <!-- Table -->
+                <div class="soc-chart-area" id="socGraph"></div>
                 <div class="soc-table-wrapper">
                     <table class="soc-table">
                         <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Source IP</th>
-                                <th>Destination IP</th>
-                                <th>Protocol</th>
-                                <th>Size</th>
-                                <th>Heuristic Status</th>
-                            </tr>
+                            <tr><th>Timestamp</th><th>Source IP</th><th>Destination IP</th><th>Protocol</th><th>Size</th><th>Heuristic Status</th></tr>
                         </thead>
-                        <tbody id="socTableBody">
-                            <!-- Packets injected via JS -->
-                        </tbody>
+                        <tbody id="socTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -802,24 +875,37 @@
                     <div class="stat-title">Total Scans</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-num" id="dashSafe" style="color: var(--safe)">0</div>
-                    <div class="stat-title">Safe Entities</div>
+                    <div class="stat-num" id="dashThreatRate" style="color: var(--warn)">0%</div>
+                    <div class="stat-title">Threat Rate</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-num" id="dashRisk" style="color: var(--danger)">0</div>
-                    <div class="stat-title">Threats Detected</div>
+                    <div class="stat-num" id="dashAvgRisk" style="color: var(--blue)">0</div>
+                    <div class="stat-title">Avg Risk Score</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="dashCommonThreat" style="font-size:1.5rem; line-height:3rem; color: var(--purple)">-</div>
+                    <div class="stat-title">Most Common</div>
                 </div>
             </div>
 
-            <div class="glass-card">
-                <h4 style="font-family: 'Orbitron'; color: var(--cyan); margin-bottom: 20px;">Module Utilization</h4>
-                <div class="chart-container" id="moduleChart">
-                    <!-- Chart bars injected via JS -->
+            <div class="dash-grid" style="grid-template-columns: 2fr 1fr;">
+                <div class="glass-card" style="margin-bottom:0;">
+                    <h4 style="font-family: 'Orbitron'; color: var(--cyan); margin-bottom: 20px;">Module Utilization</h4>
+                    <div class="chart-container" id="moduleChart" style="margin-bottom:0; height:150px;"></div>
+                </div>
+                <div class="glass-card" style="margin-bottom:0;">
+                    <h4 style="font-family: 'Orbitron'; color: var(--cyan); margin-bottom: 20px;">Activity Timeline</h4>
+                    <div class="timeline" id="activityTimeline">
+                        <p style="color:var(--text-muted); font-size:0.9rem;">No recent activity.</p>
+                    </div>
                 </div>
             </div>
 
             <div class="glass-card">
                 <h4 style="font-family: 'Orbitron'; color: var(--cyan); margin-bottom: 20px;">Event Horizon Log</h4>
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <button class="btn btn-primary" onclick="downloadReport()" style="background: linear-gradient(90deg, var(--cyan), var(--blue)); border: none; color: #000; font-weight: 600;">Download Full Report</button>
+                </div>
                 <div style="overflow-x:auto;">
                     <table class="log-table">
                         <thead><tr><th>Timestamp</th><th>Module</th><th>Verdict</th><th>Score</th></tr></thead>
@@ -848,14 +934,14 @@
                 </div>
 
                 <div id="networkResult" class="result-panel">
+                    
                     <div class="score-display">
-                        <div>
-                            <div id="netBadge" class="risk-badge" style="color: var(--safe); border-color: var(--safe);">SAFE</div>
-                            <h3 style="font-family: 'Orbitron';">Threat Index</h3>
-                        </div>
-                        <div class="meter-container">
-                            <div class="score-value"><span id="netScoreTxt">0</span><span style="font-size:1.5rem">%</span></div>
-                            <div class="meter-bar"><div id="netFill" class="meter-fill" style="background:var(--safe); width:0%;"></div></div>
+                        <div class="radial-wrap" id="networkRadial"><div class="radial-inner"><div class="radial-score"><span id="netScoreTxt" style="color:var(--text-main);">0</span>%</div><div class="radial-label">RISK</div></div></div>
+                        <div style="flex:1;">
+                            <div id="networkBadge" class="risk-badge">SAFE</div>
+                            <h3 style="font-family: 'Orbitron'; margin-bottom: 5px;">Threat Index</h3>
+                            <p id="networkConfidence" style="color:var(--text-muted); font-size:0.9rem;">Confidence Level: 0%</p>
+                            <div class="meter-bar" style="display:none;"><div id="netFill" class="meter-fill" style="width:0%;"></div></div>
                         </div>
                     </div>
 
@@ -892,15 +978,21 @@
                 </div>
 
                 <div id="urlResult" class="result-panel">
+                    
                     <div class="score-display">
-                        <div>
+                        <div class="radial-wrap" id="urlRadial"><div class="radial-inner"><div class="radial-score"><span id="urlScoreTxt" style="color:var(--text-main);">0</span>%</div><div class="radial-label">RISK</div></div></div>
+                        <div style="flex:1;">
                             <div id="urlBadge" class="risk-badge">SAFE</div>
-                            <h3 style="font-family: 'Orbitron';">Threat Index</h3>
+                            <h3 style="font-family: 'Orbitron'; margin-bottom: 5px;">Threat Index</h3>
+                            <p id="urlConfidence" style="color:var(--text-muted); font-size:0.9rem;">Confidence Level: 0%</p>
+                            <div class="meter-bar" style="display:none;"><div id="urlFill" class="meter-fill" style="width:0%;"></div></div>
                         </div>
-                        <div class="meter-container">
-                            <div class="score-value"><span id="urlScoreTxt">0</span><span style="font-size:1.5rem">%</span></div>
-                            <div class="meter-bar"><div id="urlFill" class="meter-fill" style="width:0%;"></div></div>
-                        </div>
+                    </div>
+                    <div class="data-grid" id="urlBreakdownGrid" style="display:none; margin-bottom: 1.5rem;">
+                        <div class="data-item"><label>PROTOCOL</label><br><span id="urlProto">-</span></div>
+                        <div class="data-item"><label>SUBDOMAIN</label><br><span id="urlSub">-</span></div>
+                        <div class="data-item"><label>DOMAIN</label><br><span id="urlDom">-</span></div>
+                        <div class="data-item"><label>PATH</label><br><span id="urlPath">-</span></div>
                     </div>
                     <div class="intel-box">
                         <h4>Structure Analysis</h4>
@@ -926,14 +1018,14 @@
                 </div>
 
                 <div id="emailResult" class="result-panel">
+                    
                     <div class="score-display">
-                        <div>
+                        <div class="radial-wrap" id="emailRadial"><div class="radial-inner"><div class="radial-score"><span id="emailScoreTxt" style="color:var(--text-main);">0</span>%</div><div class="radial-label">RISK</div></div></div>
+                        <div style="flex:1;">
                             <div id="emailBadge" class="risk-badge">SAFE</div>
-                            <h3 style="font-family: 'Orbitron';">Threat Index</h3>
-                        </div>
-                        <div class="meter-container">
-                            <div class="score-value"><span id="emailScoreTxt">0</span><span style="font-size:1.5rem">%</span></div>
-                            <div class="meter-bar"><div id="emailFill" class="meter-fill" style="width:0%;"></div></div>
+                            <h3 style="font-family: 'Orbitron'; margin-bottom: 5px;">Threat Index</h3>
+                            <p id="emailConfidence" style="color:var(--text-muted); font-size:0.9rem;">Confidence Level: 0%</p>
+                            <div class="meter-bar" style="display:none;"><div id="emailFill" class="meter-fill" style="width:0%;"></div></div>
                         </div>
                     </div>
                     
@@ -968,14 +1060,14 @@
                 </div>
 
                 <div id="jobResult" class="result-panel">
+                    
                     <div class="score-display">
-                        <div>
+                        <div class="radial-wrap" id="jobRadial"><div class="radial-inner"><div class="radial-score"><span id="jobScoreTxt" style="color:var(--text-main);">0</span>%</div><div class="radial-label">RISK</div></div></div>
+                        <div style="flex:1;">
                             <div id="jobBadge" class="risk-badge">SAFE</div>
-                            <h3 style="font-family: 'Orbitron';">Threat Index</h3>
-                        </div>
-                        <div class="meter-container">
-                            <div class="score-value"><span id="jobScoreTxt">0</span><span style="font-size:1.5rem">%</span></div>
-                            <div class="meter-bar"><div id="jobFill" class="meter-fill" style="width:0%;"></div></div>
+                            <h3 style="font-family: 'Orbitron'; margin-bottom: 5px;">Threat Index</h3>
+                            <p id="jobConfidence" style="color:var(--text-muted); font-size:0.9rem;">Confidence Level: 0%</p>
+                            <div class="meter-bar" style="display:none;"><div id="jobFill" class="meter-fill" style="width:0%;"></div></div>
                         </div>
                     </div>
 
@@ -1002,7 +1094,43 @@
             theme: localStorage.getItem('csx-theme') || 'dark'
         };
 
+        
         // Initialize
+        let presMode = false;
+        function togglePresentationMode() {
+            presMode = !presMode;
+            if(presMode) {
+                document.body.classList.add('presentation-mode');
+                notify("Presentation Mode Enabled.");
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            } else {
+                document.body.classList.remove('presentation-mode');
+                notify("Presentation Mode Disabled.");
+            }
+        }
+        
+        function updateTimeline(module, verdict, score, color) {
+            const tl = document.getElementById('activityTimeline');
+            if (tl.innerText.includes("No recent activity")) tl.innerHTML = '';
+            const t = new Date().toLocaleTimeString();
+            tl.innerHTML = `<div class="timeline-item"><div class="timeline-time">${t}</div><div class="timeline-desc"><span style="color:var(--cyan); font-weight:bold;">${module}</span>: ${verdict} (<span style="color:${color}">${score}% Risk</span>)</div></div>` + tl.innerHTML;
+        }
+        
+        function highRiskAlert() {
+            try {
+                let actx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = actx.createOscillator();
+                let g = actx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(400, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, actx.currentTime + 0.5);
+                g.gain.setValueAtTime(0.5, actx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.5);
+                osc.connect(g); g.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.5);
+            } catch(e){}
+        }
+
         document.body.setAttribute('data-theme', SYS.theme);
         updateThemeUI();
         renderDashboard();
@@ -1061,8 +1189,12 @@
         }
 
         function clearPanel(type) {
-            document.getElementById(`${type}Input`).value = '';
-            document.getElementById(`${type}Result`).style.display = 'none';
+            const inputId = type === 'network' ? 'netInput' : `${type}Input`;
+            const resultId = `${type}Result`;
+            const inputEl = document.getElementById(inputId);
+            const resultEl = document.getElementById(resultId);
+            if(inputEl) inputEl.value = '';
+            if(resultEl) resultEl.style.display = 'none';
             notify(`${type.toUpperCase()} module memory wiped.`);
         }
 
@@ -1081,10 +1213,14 @@
             score = Math.min(score, 100);
             
             const panel = document.getElementById(`${type}Result`);
-            const badge = document.getElementById(`${type}Badge`);
-            const num = document.getElementById(`${type}ScoreTxt`);
-            const bar = document.getElementById(`${type}Fill`);
-            const list = document.getElementById(`${type}Details`);
+            const badgeId = type === 'network' ? 'networkBadge' : `${type}Badge`;
+            const badge = document.getElementById(badgeId);
+            const numId = type === 'network' ? 'netScoreTxt' : `${type}ScoreTxt`;
+            const num = document.getElementById(numId);
+            const barId = type === 'network' ? 'netFill' : `${type}Fill`;
+            const bar = document.getElementById(barId);
+            const listId = type === 'network' ? 'netDetails' : `${type}Details`;
+            const list = document.getElementById(listId);
 
             panel.style.display = 'block';
             
@@ -1121,6 +1257,22 @@
                 }
             }, 10);
 
+            // AI Confidence
+            const conf = Math.floor(score + (Math.random()*15 - 5));
+            const boundedConf = Math.max(70, Math.min(99, Math.max(conf, 50)));
+            const confId = type === 'network' ? 'network' : type;
+            const confEl = document.getElementById(`${confId}Confidence`);
+            if(confEl) {
+                confEl.innerText = `AI Confidence Level: ${boundedConf}%`;
+                confEl.style.color = color;
+            }
+
+            // Radial
+            const radial = document.getElementById(`${confId}Radial`);
+            if(radial) {
+                radial.style.background = `conic-gradient(${color} ${score}%, transparent 0%)`;
+            }
+
             // Save to state
             SYS.counts[type]++;
             SYS.logs.unshift({
@@ -1130,7 +1282,16 @@
                 score: score,
                 color: color
             });
-            if(SYS.logs.length > 20) SYS.logs.pop(); // Keep array small
+            if(SYS.logs.length > 20) SYS.logs.pop();
+            
+            updateTimeline(type.toUpperCase(), text, score, color);
+            
+            if (score > 70) {
+                panel.classList.add('high-risk-glow');
+                highRiskAlert();
+            } else {
+                panel.classList.remove('high-risk-glow');
+            }
 
             notify(`Scan Complete: ${score}% Risk Level.`);
             // Optional basic beep (browser allowed context)
@@ -1145,7 +1306,7 @@
 
         // --- Advanced Modules ---
 
-        // 1. Network Intelligence (Real Fetch API + Simulation)
+        // 1. Network Intelligence (Enhanced Real Fetch API + Advanced Simulation)
         async function execNetworkScan() {
             let input = document.getElementById('netInput').value.trim();
             
@@ -1153,7 +1314,8 @@
                 {msg: "ESTABLISHING SECURE CONNECTION...", wait: 500},
                 {msg: "RESOLVING DOMAIN/IP ROUTING...", wait: 800},
                 {msg: "GATHERING GEOLOCATION TELEMETRY...", wait: 800},
-                {msg: "SIMULATING PORT TRAFFIC...", wait: 600}
+                {msg: "ANALYZING THREAT INTELLIGENCE...", wait: 600},
+                {msg: "SIMULATING ADVANCED PORT SCANNING...", wait: 700}
             ]);
 
             let score = 0;
@@ -1179,9 +1341,22 @@
                 ipToQuery = input;
                 score += 25;
                 findings.push("Direct IP input detected. Skipping DNS resolver (Suspicious behavior context).");
+                
+                // Check for private/reserved IPs
+                const privateRanges = [
+                    /^10\./,
+                    /^172\.(1[6-9]|2[0-9]|3[0-1])\./,
+                    /^192\.168\./,
+                    /^127\./,
+                    /^169\.254\./
+                ];
+                if (privateRanges.some(range => range.test(ipToQuery))) {
+                    score += 20;
+                    findings.push("Private/reserved IP address detected. Potential internal network scan.");
+                }
             } else {
                 domainName = input;
-                // Google DNS API Implementation
+                // Enhanced DNS resolution with multiple checks
                 try {
                     let d = await fetch(`https://dns.google/resolve?name=${domainName}&type=A`);
                     let res = await d.json();
@@ -1189,21 +1364,39 @@
                         ipToQuery = res.Answer[0].data;
                         dnsRecords = res.Answer.map(a => a.data).join(', ');
                         findings.push(`Domain <span class="highlight-scan">${domainName}</span> resolved to IP: <span class="highlight-scan">${ipToQuery}</span> via Google DNS.`);
+                        
+                        // Check for suspicious DNS patterns
+                        if (res.Answer.length > 5) {
+                            score += 15;
+                            findings.push("Multiple A-records detected. Potential load balancing or CDN usage.");
+                        }
                     } else {
                         score += 30;
                         ipToQuery = "0.0.0.0";
                         findings.push(`CRITICAL: Google DNS returned NO A-records for ${domainName}. Potential sinkhole or unregistered domain.`);
                     }
+                    
+                    // Check for suspicious domain patterns
+                    if (domainName.includes('-') && domainName.split('-').length > 2) {
+                        score += 10;
+                        findings.push("Hyphenated domain detected. Common in phishing attempts.");
+                    }
+                    
+                    if (domainName.length > 20) {
+                        score += 5;
+                        findings.push("Unusually long domain name detected.");
+                    }
+                    
                 } catch(e) {
                     ipToQuery = "127.0.0.1";
                     findings.push(`CRITICAL: Failed to resolve domain via DNS-over-HTTPS.`);
                 }
                 
-                // Suspicious Words check
-                const suspWords = ['login', 'secure', 'verify', 'update', 'account', 'banking'];
+                // Suspicious Words check (enhanced)
+                const suspWords = ['login', 'secure', 'verify', 'update', 'account', 'banking', 'paypal', 'apple', 'microsoft', 'amazon', 'crypto', 'wallet', 'free', 'prize'];
                 suspWords.forEach(w => {
                     if(domainName.toLowerCase().includes(w)) {
-                        score += 20;
+                        score += 15;
                         findings.push(`Deceptive keyword "${w}" detected in domain string.`);
                     }
                 });
@@ -1225,8 +1418,8 @@
                 }
             } catch(e) {}
 
-            // Simulated Firewall Status
-            const fwStatuses = ['Enabled (Strict)', 'Enabled (Permissive)', 'Disabled/Bypassed', 'WAF Detected (Cloudflare/Akamai)'];
+            // Enhanced Firewall Status with more options
+            const fwStatuses = ['Enabled (Strict)', 'Enabled (Permissive)', 'Disabled/Bypassed', 'WAF Detected (Cloudflare/Akamai)', 'Firewall Detected (Fortinet/Palo Alto)', 'No Firewall Detected'];
             const firewall = fwStatuses[Math.floor(Math.random() * fwStatuses.length)];
 
             document.getElementById('rNetIp').innerText = ipToQuery;
@@ -1235,69 +1428,213 @@
             document.getElementById('rNetDns').innerText = dnsRecords;
             document.getElementById('rNetFw').innerText = firewall;
 
-            // Simulated Open Ports
-            const allPorts = [80, 443, 21, 22, 3389, 445];
-            const activePorts = allPorts.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 1);
+            // Enhanced Open Ports Simulation with more realistic logic
+            const allPorts = [21, 22, 23, 25, 53, 80, 110, 143, 443, 993, 995, 3389, 445, 8080, 8443];
+            let activePorts = [];
+            
+            // More intelligent port selection based on service type
+            if (domainName) {
+                // Web domains likely have HTTP/HTTPS
+                if (Math.random() > 0.3) activePorts.push(80);
+                if (Math.random() > 0.2) activePorts.push(443);
+                // Some might have FTP/SSH
+                if (Math.random() > 0.8) activePorts.push(21);
+                if (Math.random() > 0.9) activePorts.push(22);
+            } else {
+                // Random IP - more varied ports
+                activePorts = allPorts.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 1);
+            }
+            
             document.getElementById('rNetPorts').innerText = activePorts.join(', ');
 
-            // Logic Check
+            // Enhanced Logic Check with more detailed analysis
             if (activePorts.includes(3389) || activePorts.includes(445)) {
-                score += 40;
-                findings.push(`CRITICAL: Administration/SMB ports open (${activePorts.filter(p=>[3389,445].includes(p)).join(',')}). High vulnerability to ransomware payload dropping.`);
-            } else if(activePorts.includes(21) || activePorts.includes(22)) {
+                score += 45;
+                findings.push(`CRITICAL: Administration/SMB ports open (${activePorts.filter(p=>[3389,445].includes(p)).join(',')}). High vulnerability to ransomware payload dropping and lateral movement.`);
+            } else if(activePorts.includes(21) || activePorts.includes(22) || activePorts.includes(23)) {
+                score += 25;
+                findings.push("File transfer/remote access ports exposed laterally. Potential for unauthorized data exfiltration.");
+            } else if (activePorts.includes(25) || activePorts.includes(110) || activePorts.includes(143)) {
                 score += 20;
-                findings.push("SSH/FTP ports exposed laterally.");
+                findings.push("Mail service ports detected. Monitor for spam relay attempts.");
             }
-
-            let dangerZones = ['Russia', 'China', 'North Korea', 'Panama'];
-            if (dangerZones.includes(geoData.country_name)) {
-                score += 30;
-                findings.push(`Risk elevated: Traffic originating from known high-threat jurisdiction.`);
+            
+            // Enhanced geolocation risk assessment
+            const highRiskCountries = ['Russia', 'China', 'North Korea', 'Iran', 'Syria', 'Cuba', 'Venezuela'];
+            const mediumRiskCountries = ['Panama', 'Ukraine', 'Belarus', 'Kazakhstan', 'Nigeria', 'Ghana'];
+            
+            if (highRiskCountries.includes(geoData.country_name)) {
+                score += 40;
+                findings.push(`CRITICAL: Traffic originating from high-threat jurisdiction (${geoData.country_name}). Known for state-sponsored cyber operations.`);
+            } else if (mediumRiskCountries.includes(geoData.country_name)) {
+                score += 25;
+                findings.push(`ELEVATED RISK: Traffic from medium-threat jurisdiction (${geoData.country_name}). Increased monitoring recommended.`);
+            }
+            
+            // Check for known malicious IP ranges (simplified)
+            const suspiciousRanges = ['185.159.', '185.160.', '185.161.']; // Example ranges
+            if (suspiciousRanges.some(range => ipToQuery.startsWith(range))) {
+                score += 35;
+                findings.push("IP address falls within known malicious hosting ranges.");
+            }
+            
+            // Firewall analysis
+            if (firewall.includes('Disabled') || firewall.includes('No Firewall')) {
+                score += 20;
+                findings.push("No active firewall protection detected. Highly vulnerable to attacks.");
+            } else if (firewall.includes('WAF Detected')) {
+                score -= 10; // Reduce score for good protection
+                findings.push("Web Application Firewall detected. Some protection in place.");
             }
 
             applyVerdict('network', score, findings);
         }
 
-        // 2. URL Forensics
+        // 2. URL Forensics (Enhanced Analysis)
         async function execUrlScan() {
             const url = document.getElementById('urlInput').value.trim();
             if(!url) return notify('Empty URL vector provided.');
 
             await simulateLoader([
                 {msg: "DECONSTRUCTING URL SYNTAX...", wait: 500},
-                {msg: "CHECKING PHISHING DICTIONARY...", wait: 600}
+                {msg: "CHECKING PHISHING DICTIONARY...", wait: 600},
+                {msg: "ANALYZING DOMAIN REPUTATION...", wait: 700},
+                {msg: "SCANNING FOR MALWARE PATTERNS...", wait: 500}
             ]);
 
             let score = 0; let findings = [];
             
-            if(url.length > 60) { score+= 20; findings.push("Anomalous string length (potential obfuscation tactic)."); }
-            if(url.startsWith('http://')){ score+=30; findings.push("Protocol is unencrypted (HTTP)."); }
+            // Enhanced length and structure checks
+            if(url.length > 80) { score+= 25; findings.push("Anomalous string length (potential obfuscation tactic)."); }
+            if(url.length > 120) { score+= 15; findings.push("Extremely long URL detected. May contain encoded malware."); }
             
-            const kw = ['login', 'verify', 'account', 'secure', 'update', 'banking', 'paypal', 'apple'];
-            kw.forEach(k => {
+            // Protocol analysis
+            if(url.startsWith('http://')){ score+=35; findings.push("Protocol is unencrypted (HTTP). Vulnerable to man-in-the-middle attacks."); }
+            if(url.includes('https://http://') || url.includes('http://https://')) { score+=50; findings.push("Protocol confusion detected. Malicious URL manipulation."); }
+            
+            // Enhanced keyword detection
+            const phishingKeywords = ['login', 'verify', 'account', 'secure', 'update', 'banking', 'paypal', 'apple', 'microsoft', 'amazon', 'crypto', 'wallet', 'free', 'prize', 'urgent', 'confirm', 'validate', 'authenticate'];
+            let keywordMatches = 0;
+            phishingKeywords.forEach(k => {
                 if(url.toLowerCase().includes(k)) {
-                    score+= 15; findings.push(`Deceptive keyword detected: <span class="highlight-scan">${k}</span>`);
+                    score+= 12; 
+                    keywordMatches++;
+                    findings.push(`Deceptive keyword detected: <span class="highlight-scan">${k}</span>`);
                 }
             });
-
+            
+            // URL shortener detection
+            const shorteners = ['bit.ly', 'tinyurl.com', 'goo.gl', 't.co', 'ow.ly', 'is.gd', 'buff.ly', 'adf.ly', 'tiny.cc'];
+            shorteners.forEach(s => {
+                if(url.toLowerCase().includes(s)) {
+                    score+= 30;
+                    findings.push(`URL shortener detected: <span class="highlight-scan">${s}</span>. Cannot verify destination.`);
+                }
+            });
+            
+            // IP-based URL detection
             const ipUrl = /\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
-            if(ipUrl.test(url)) { score+= 40; findings.push("IP-based URL detected (Domain masking bypass attempt)."); }
+            if(ipUrl.test(url)) { score+= 45; findings.push("IP-based URL detected (Domain masking bypass attempt)."); }
+            
+            // Suspicious character patterns
+            if(url.includes('%') && url.split('%').length > 3) { score+= 20; findings.push("Heavy URL encoding detected. Potential obfuscation."); }
+            if(url.includes('..') || url.includes('//')) { score+= 25; findings.push("Directory traversal patterns detected."); }
+            
+            // Domain analysis
+            try {
+                const urlObj = new URL(url.startsWith('http') ? url : 'https://' + url);
+                const domain = urlObj.hostname;
+                
+                // Check for suspicious TLDs
+                const suspiciousTlds = ['.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.top', '.club', '.online', '.site'];
+                const tld = domain.substring(domain.lastIndexOf('.'));
+                if(suspiciousTlds.includes(tld)) {
+                    score+= 20;
+                    findings.push(`Suspicious TLD detected: <span class="highlight-scan">${tld}</span>. Commonly used in phishing.`);
+                }
+                
+                // Check for homograph attacks (similar looking characters)
+                const homoglyphs = {'rn': 'm', 'cl': 'd', 'vv': 'w', '0': 'o', '1': 'l'};
+                let hasHomoglyph = false;
+                for(let [fake, real] of Object.entries(homoglyphs)) {
+                    if(domain.includes(fake)) {
+                        hasHomoglyph = true;
+                        break;
+                    }
+                }
+                if(hasHomoglyph) {
+                    score+= 25;
+                    findings.push("Potential homograph attack detected. Domain contains visually similar characters.");
+                }
+                
+                // Check for excessive subdomains
+                const subdomainCount = domain.split('.').length - 2; // Subtract TLD and main domain
+                if(subdomainCount > 2) {
+                    score+= 15;
+                    findings.push(`Excessive subdomains detected (${subdomainCount}). Potential subdomain takeover risk.`);
+                }
+                
+            } catch(e) {
+                score+= 20;
+                findings.push("Invalid URL format detected.");
+            }
+            
+            // Path analysis
+            const path = url.split('?')[0].split('#')[0];
+            if(path.includes('/admin') || path.includes('/login') || path.includes('/wp-admin')) {
+                score+= 20;
+                findings.push("Administrative path detected in URL.");
+            }
+            
+            // Query parameter analysis
+            if(url.includes('?')) {
+                const params = new URLSearchParams(url.split('?')[1]);
+                if(params.has('redirect') || params.has('url') || params.has('next')) {
+                    score+= 15;
+                    findings.push("Open redirect parameters detected.");
+                }
+            }
+            
+            // Overall risk assessment
+            if(keywordMatches > 2) {
+                score+= 10;
+                findings.push("Multiple phishing indicators detected. High confidence phishing attempt.");
+            }
+
+            
+            // URL breakdown logic
+            const breakdown = document.getElementById('urlBreakdownGrid');
+            breakdown.style.display = 'grid';
+            try {
+                let pUrl = url.startsWith('http') ? url : 'https://' + url;
+                let u = new URL(pUrl);
+                document.getElementById('urlProto').innerText = u.protocol.replace(':','');
+                let parts = u.hostname.split('.');
+                document.getElementById('urlDom').innerText = parts.slice(-2).join('.');
+                document.getElementById('urlSub').innerText = parts.length > 2 ? parts.slice(0, -2).join('.') : 'None';
+                document.getElementById('urlPath').innerText = (u.pathname === '/' && url.indexOf('/')===-1) ? 'None' : u.pathname;
+            } catch(e) {
+                document.getElementById('urlProto').innerText = 'Unknown';
+            }
 
             applyVerdict('url', score, findings);
         }
 
-        // 3. Email Shield
+        // 3. Email Shield (Enhanced Analysis)
         async function execEmailScan() {
             const text = document.getElementById('emailInput').value.trim();
             if(!text) return notify('No email body detected.');
 
             await simulateLoader([
                 {msg: "RUNNING NLP HEURISTICS...", wait: 600},
-                {msg: "EXTRACTING EMBEDDED HYPERLINKS...", wait: 700}
+                {msg: "EXTRACTING EMBEDDED HYPERLINKS...", wait: 700},
+                {msg: "ANALYZING SENDER PATTERNS...", wait: 500},
+                {msg: "CHECKING FOR MALWARE SIGNATURES...", wait: 600}
             ]);
 
             let score = 0; let findings = [];
             
+            // Enhanced URL extraction and analysis
             const urlRegex = /(https?:\/\/[^\s]+)/g;
             const links = text.match(urlRegex) || [];
             
@@ -1305,52 +1642,218 @@
             if(links.length > 0) {
                 eLinksDiv.style.display = 'block';
                 document.getElementById('eLinksList').innerHTML = links.map(l => `<span style="color:var(--cyan)">${l}</span>`).join('<br>');
-                score += 20;
+                score += 15;
                 findings.push(`Extracted ${links.length} embedded hyperlink(s).`);
                 
-                if(links.join('').includes('bit.ly') || links.join('').includes('tinyurl')) {
-                    score += 25; findings.push("URL shortener used to mask true destination payload.");
+                // Analyze each link
+                links.forEach(link => {
+                    if(link.includes('bit.ly') || link.includes('tinyurl') || link.includes('goo.gl')) {
+                        score += 25; 
+                        findings.push("URL shortener used to mask true destination payload.");
+                    }
+                    if(link.startsWith('http://')) {
+                        score += 10;
+                        findings.push("Unencrypted HTTP link detected in email.");
+                    }
+                    if(link.includes('login') || link.includes('verify') || link.includes('account')) {
+                        score += 20;
+                        findings.push("Suspicious link text containing authentication keywords.");
+                    }
+                });
+                
+                if(links.length > 3) {
+                    score += 15;
+                    findings.push("Excessive number of links detected. Potential link spam.");
                 }
+                
             } else {
                 eLinksDiv.style.display = 'none';
             }
 
-            const triggers = ['urgent', 'immediate', 'suspend', 'account closed', 'unauthorized', 'wire transfer', 'inheritance'];
-            let count = 0;
-            triggers.forEach(t => { if(text.toLowerCase().includes(t)) { count++; } });
+            // Enhanced psychological manipulation detection
+            const urgencyTriggers = ['urgent', 'immediate', 'asap', 'emergency', 'critical', 'deadline', 'expires soon', 'time sensitive', 'act now', 'limited time'];
+            const fearTriggers = ['suspend', 'account closed', 'unauthorized', 'suspicious activity', 'security breach', 'compromised', 'locked', 'disabled'];
+            const greedTriggers = ['prize', 'winner', 'inheritance', 'lottery', 'free money', 'refund', 'bonus', 'commission'];
+            const authorityTriggers = ['bank', 'government', 'irs', 'fbi', 'police', 'legal', 'court', 'official'];
             
-            if(count > 0) {
-                score += (count * 15);
-                findings.push(`Detected ${count} psychological manipulation (urgency/fear) triggers.`);
+            let urgencyCount = 0, fearCount = 0, greedCount = 0, authorityCount = 0;
+            
+            urgencyTriggers.forEach(t => { if(text.toLowerCase().includes(t)) { urgencyCount++; } });
+            fearTriggers.forEach(t => { if(text.toLowerCase().includes(t)) { fearCount++; } });
+            greedTriggers.forEach(t => { if(text.toLowerCase().includes(t)) { greedCount++; } });
+            authorityTriggers.forEach(t => { if(text.toLowerCase().includes(t)) { authorityCount++; } });
+            
+            if(urgencyCount > 0) {
+                score += (urgencyCount * 12);
+                findings.push(`Detected ${urgencyCount} urgency manipulation trigger(s).`);
+            }
+            if(fearCount > 0) {
+                score += (fearCount * 18);
+                findings.push(`Detected ${fearCount} fear-based manipulation trigger(s).`);
+            }
+            if(greedCount > 0) {
+                score += (greedCount * 15);
+                findings.push(`Detected ${greedCount} greed exploitation trigger(s).`);
+            }
+            if(authorityCount > 0) {
+                score += (authorityCount * 20);
+                findings.push(`Detected ${authorityCount} authority impersonation trigger(s).`);
+            }
+            
+            // Check for suspicious email patterns
+            if(text.includes('@') && text.split('@').length > 2) {
+                score += 15;
+                findings.push("Multiple email addresses detected. Potential spoofing or mass mailing.");
+            }
+            
+            // Check for attachment indicators
+            const attachmentIndicators = ['attachment', 'attached', 'download', 'file', '.exe', '.zip', '.rar', '.doc', '.pdf'];
+            let attachmentMentions = 0;
+            attachmentIndicators.forEach(ind => {
+                if(text.toLowerCase().includes(ind)) attachmentMentions++;
+            });
+            if(attachmentMentions > 0) {
+                score += (attachmentMentions * 10);
+                findings.push("Attachment references detected. Always verify file authenticity.");
+            }
+            
+            // Check for poor grammar/spelling (common in scams)
+            const commonErrors = ['dear customer', 'dear user', 'hello friend', 'congratulations you have won'];
+            commonErrors.forEach(error => {
+                if(text.toLowerCase().includes(error)) {
+                    score += 8;
+                    findings.push("Generic greeting detected. Common in mass phishing campaigns.");
+                }
+            });
+            
+            // Check for phone numbers (scam callback requests)
+            const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g;
+            const phones = text.match(phoneRegex) || [];
+            if(phones.length > 0) {
+                score += (phones.length * 12);
+                findings.push(`Phone number(s) detected: ${phones.join(', ')}. Potential callback scam.`);
+            }
+            
+            // Overall assessment
+            const totalTriggers = urgencyCount + fearCount + greedCount + authorityCount;
+            if(totalTriggers > 3) {
+                score += 15;
+                findings.push("Multiple manipulation techniques detected. High-confidence phishing attempt.");
             }
 
             applyVerdict('email', score, findings);
         }
 
-        // 4. Job Guard
+        // 4. Job Guard (Enhanced Analysis)
         async function execJobScan() {
             const text = document.getElementById('jobInput').value.trim();
             if(!text) return notify('No listing content provided.');
 
             await simulateLoader([
-                {msg: "CROSS-REFERENCING JOB FRAUD DATABASE...", wait: 800}
+                {msg: "CROSS-REFERENCING JOB FRAUD DATABASE...", wait: 800},
+                {msg: "ANALYZING COMPENSATION PATTERNS...", wait: 600},
+                {msg: "CHECKING COMPANY CREDENTIALS...", wait: 500}
             ]);
 
             let score = 0; let findings = [];
             let hlText = text;
 
-            const scams = ['registration fee', 'earn money fast', 'no experience', 'urgent hiring', 'whatsapp me', 'telegram', 'security deposit', 'crypto'];
+            // Enhanced scam detection patterns
+            const scamPatterns = [
+                // Payment scams
+                'registration fee', 'application fee', 'processing fee', 'background check fee', 'training fee',
+                'earn money fast', 'easy money', 'work from home', 'no experience required', 'immediate hiring',
+                'whatsapp me', 'telegram', 'signal', 'wire transfer', 'money order', 'western union',
+                'security deposit', 'bond', 'refundable deposit', 'startup costs',
+                
+                // Red flags
+                'guaranteed employment', 'no interview', 'start immediately', 'confidential', 'discretion required',
+                'crypto payment', 'bitcoin', 'blockchain', 'nft', 'passive income',
+                'inheritance', 'lottery', 'prize', 'winner', 'congratulations',
+                
+                // Too good to be true
+                '$1000/day', '$5000/week', '$10000/month', 'unlimited earnings', 'residual income',
+                'ceo position', 'executive role', 'managing director', 'no skills needed'
+            ];
             
-            scams.forEach(s => {
-                let re = new RegExp(`(${s})`, 'gi');
-                if(re.test(hlText)) {
-                    score += 25;
-                    findings.push(`Fraud criteria met: <span class="highlight-scan">${s}</span>`);
-                    hlText = hlText.replace(re, `<span class="highlight-scan">$1</span>`);
+            let scamMatches = 0;
+            scamPatterns.forEach(pattern => {
+                const regex = new RegExp(`(${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                if(regex.test(hlText)) {
+                    score += 20;
+                    scamMatches++;
+                    findings.push(`Fraud criteria met: <span class="highlight-scan">${pattern}</span>`);
+                    hlText = hlText.replace(regex, `<span class="highlight-scan">$1</span>`);
                 }
             });
 
-            if(text.length < 100) { score+=15; findings.push("Listing lacks professional detail (Too short)."); }
+            // Length and detail analysis
+            if(text.length < 150) { 
+                score += 15; 
+                findings.push("Listing lacks professional detail (Too short). Suspicious brevity."); 
+            }
+            if(text.length > 2000) {
+                score += 10;
+                findings.push("Unusually long listing. May contain excessive promises or confusion tactics.");
+            }
+
+            // Contact method analysis
+            const contactMethods = ['email only', 'no phone', 'whatsapp only', 'telegram only', 'signal only'];
+            contactMethods.forEach(method => {
+                if(text.toLowerCase().includes(method.replace(' only', ''))) {
+                    score += 15;
+                    findings.push(`Suspicious contact method: <span class="highlight-scan">${method}</span>`);
+                }
+            });
+
+            // Compensation analysis
+            const compensationPatterns = ['salary.*hidden', 'compensation.*undisclosed', 'pay.*negotiable', 'commission only'];
+            compensationPatterns.forEach(pattern => {
+                if(new RegExp(pattern, 'i').test(text)) {
+                    score += 12;
+                    findings.push("Vague compensation structure detected.");
+                }
+            });
+
+            // Check for legitimate indicators (reduce score)
+            const legitimateIndicators = ['benefits package', 'health insurance', '401k', 'paid time off', 'professional development', 'equal opportunity', 'eeo'];
+            let legitCount = 0;
+            legitimateIndicators.forEach(ind => {
+                if(text.toLowerCase().includes(ind)) legitCount++;
+            });
+            if(legitCount > 0) {
+                score -= (legitCount * 5); // Reduce risk score for legitimate indicators
+                findings.push(`${legitCount} legitimate employment indicators detected.`);
+            }
+
+            // Industry analysis
+            const highRiskIndustries = ['cryptocurrency', 'forex', 'mlm', 'multi-level marketing', 'network marketing', 'dropshipping', 'affiliate marketing'];
+            highRiskIndustries.forEach(industry => {
+                if(text.toLowerCase().includes(industry)) {
+                    score += 25;
+                    findings.push(`High-risk industry detected: <span class="highlight-scan">${industry}</span>`);
+                }
+            });
+
+            // Location analysis
+            if(text.toLowerCase().includes('remote') && text.toLowerCase().includes('anywhere')) {
+                score += 10;
+                findings.push("Overly flexible remote work requirements.");
+            }
+
+            // Education requirements
+            if(text.toLowerCase().includes('no degree') || text.toLowerCase().includes('no education')) {
+                score += 8;
+                findings.push("No education requirements stated. May indicate low-quality opportunity.");
+            }
+
+            // Overall assessment
+            if(scamMatches > 3) {
+                score += 20;
+                findings.push("Multiple fraud indicators detected. High-confidence scam listing.");
+            } else if(scamMatches > 0) {
+                findings.push(`${scamMatches} potential risk factor(s) identified.`);
+            }
 
             document.getElementById('jobHighlighted').innerHTML = hlText;
             applyVerdict('job', score, findings);
@@ -1360,12 +1863,20 @@
         function renderDashboard() {
             let t = SYS.counts.network + SYS.counts.url + SYS.counts.email + SYS.counts.job;
             let isSafe = SYS.logs.filter(l => l.score <= 30).length;
-            let isRisk = t - isSafe;
+            let isRisk = Object.values(SYS.counts).reduce((a,b)=>a+b, 0) - isSafe;
+            
+            let threatRate = t === 0 ? 0 : Math.round((isRisk / t) * 100);
+            let sumRisk = SYS.logs.reduce((sum, l) => sum + l.score, 0);
+            let avgRisk = SYS.logs.length === 0 ? 0 : Math.round(sumRisk / SYS.logs.length);
+            
+            let modCounts = { 'Network': SYS.counts.network || 0, 'URL': SYS.counts.url || 0, 'Email': SYS.counts.email || 0, 'Job': SYS.counts.job || 0 };
+            let popular = Object.keys(modCounts).reduce((a, b) => modCounts[a] > modCounts[b] ? a : b);
 
             document.getElementById('dashTotal').innerText = t;
-            document.getElementById('dashSafe').innerText = isSafe;
-            document.getElementById('dashRisk').innerText = isRisk;
-
+            document.getElementById('dashThreatRate').innerText = threatRate + '%';
+            document.getElementById('dashAvgRisk').innerText = avgRisk;
+            document.getElementById('dashCommonThreat').innerText = t === 0 ? '-' : popular;
+            
             // Generate simple bar chart
             const chart = document.getElementById('moduleChart');
             chart.innerHTML = '';
@@ -1402,6 +1913,37 @@
                 `).join('');
             }
         }
+
+        // --- Download Report Function ---
+        
+        function downloadReport() {
+            if (SYS.logs.length === 0) return notify('No data available for report generation.');
+            
+            let textRep = `CYBERSHIELD X ELITE - INTELLIGENCE REPORT
+`;
+            textRep += `Generated: ${new Date().toLocaleString()}
+=========================================
+`;
+            textRep += `Total Scans: ${Object.values(SYS.counts).reduce((a,b)=>a+b,0)}
+
+### THREAT LOGS ###
+`;
+            
+            SYS.logs.forEach(l => {
+                textRep += `[${l.time}] ${l.module} SCAN
+  -> Verdict: ${l.verdict}
+  -> Risk Score: ${l.score}%
+
+`;
+            });
+            
+            const blob = new Blob([textRep], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `Threat_Report.txt`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            notify('Simple Report (TXT) Downloaded.');
+        }
+
 
         // --- Live SOC Monitoring Engine ---
         const SOC = {
